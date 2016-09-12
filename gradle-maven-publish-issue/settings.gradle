@@ -1,0 +1,6 @@
+include 'Lib-A'
+include 'Lib-B'
+
+project(":Lib-A").projectDir = file("A")
+project(":Lib-B").projectDir = file("B")
+

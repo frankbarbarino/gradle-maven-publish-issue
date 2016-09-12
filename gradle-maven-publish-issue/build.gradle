@@ -1,0 +1,42 @@
+```
+buildscript { repositories {mavenCentral() } }
+
+subprojects {
+	group = 'com.mycompany.myproject'
+
+		repositories {
+			mavenCentral()
+		}
+	apply plugin: 'java'
+		apply plugin: 'maven-publish'
+
+		sourceSets {
+			main { java { srcDirs = ['src'] } }
+			test { java { srcDir 'test' } }
+		}
+
+	publishing { 
+		publications { mavenJava(MavenPublication) { from components.java } }
+		repositories {
+			maven { 
+				credentials { 
+					username "deploy" 
+						password "deploy" 
+				}
+				url "https://internal.artifactory.server/artifactory/libs-snapshot-local" 
+			}
+		}
+	}
+
+	task release(dependsOn: 'publish') << {
+		println "Module releaseing version $version"
+	}
+	gradle.taskGraph.whenReady {taskGraph ->
+		if (taskGraph.hasTask(release)) {
+			version = "${productversion}"
+		} else {
+			version = "${productversion}-SNAPSHOT"
+		}
+	}
+}
+```
